@@ -17,6 +17,7 @@ RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-s -w" -installsuffix cgo -o wxA
 
 
 FROM ubuntu
+COPY ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /go/release/wxAutoSave /bin/wxAutoSave
 
 
