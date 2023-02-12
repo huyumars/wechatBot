@@ -101,6 +101,14 @@ func main() {
 			}
 			defer out.Close()
 			io.Copy(out, response.Body)
+			err = os.Chown(tmpFile, uid, gid)
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = os.Chmod(tmpFile, 777)
+			if err != nil {
+				fmt.Println(err)
+			}
 			fmt.Printf("save file to %s\n", tmpFile)
 			// use move let system know file changes
 			err = move(tmpFile, location)
@@ -108,10 +116,6 @@ func main() {
 				fmt.Println(err)
 			}
 			fmt.Printf("move %s to %s, let system knows\n", tmpFile, location)
-			err = os.Chown(location, uid, gid)
-			if err != nil {
-				fmt.Println(err)
-			}
 		}
 	}
 
