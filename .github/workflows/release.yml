@@ -1,0 +1,32 @@
+name: Release CI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: build image
+      run: docker build . --file Dockerfile --tag wechatBot
+
+    - name: save image
+      run: docker save wechatBot > wechatBot.img
+
+    - name: print
+      run: echo $GITHUB_REF
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: wechatBot.img
+        asset_name: wechatBot.img
+        tag: ${{ github.ref }}
+        overwrite: true
+        body: "calibre cbz output plugin"

@@ -36,13 +36,11 @@ func main() {
 
 	bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式，上面登录不上的可以尝试切换这种模式
 
-	// 注册登陆二维码回调
-	bot.UUIDCallback = openwechat.PrintlnQrcodeUrl
-
-	// 登陆
-	if err := bot.Login(); err != nil {
-		fmt.Println(err)
-		return
+	reloadStorage := openwechat.NewFileHotReloadStorage("storage.json")
+	defer reloadStorage.Close()
+	err := bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption())
+	if err != nil {
+		panic("login failed")
 	}
 
 	// 获取登陆的用户
