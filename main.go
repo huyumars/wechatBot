@@ -51,10 +51,11 @@ func main() {
 	storePath := os.Getenv("STORE_PATH")
 	uid := getIntOr(os.Getenv("UID"), 0)
 	gid := getIntOr(os.Getenv("GID"), 0)
+	permit := getIntOr(os.Getenv("PERMIT"), 0777)
 	if len(storePath) == 0 {
 		storePath = "."
 	}
-	fmt.Println("store path: ", storePath)
+	fmt.Printf("store path:%s, uid:%d, gid:%d, file mode:%o\n", storePath, uid, gid, permit)
 
 	bot := openwechat.DefaultBot(openwechat.Desktop) // 桌面模式，上面登录不上的可以尝试切换这种模式
 
@@ -105,7 +106,7 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			err = os.Chmod(tmpFile, 0777)
+			err = os.Chmod(tmpFile, os.FileMode(permit))
 			if err != nil {
 				fmt.Println(err)
 			}
