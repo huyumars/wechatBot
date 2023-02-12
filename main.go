@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -27,8 +28,21 @@ func fileName(prefix string) string {
 	return fmt.Sprintf("%s_%s_%s", prefix, now.Format("2006_01_02_15"), RandStringBytes(4))
 }
 
+func getIntOr(val string, defaultVal int) int {
+	if val != "" {
+		ret, err := strconv.Atoi(val)
+		if err != nil {
+			panic("fail to convert int for " + val)
+		}
+		return ret
+	}
+	return defaultVal
+}
+
 func main() {
 	storePath := os.Getenv("STORE_PATH")
+	uid := getIntOr(os.Getenv("UID"), 0)
+	gid := getIntOr(os.Getenv("GID"), 0)
 	if len(storePath) == 0 {
 		storePath = "."
 	}
@@ -73,11 +87,15 @@ func main() {
 			location := path.Join(storePath, fileName(prefix)+"."+ext)
 			out, err := os.Create(location)
 			if err != nil {
-				fmt.Printf("meet error when create file %s for %s", location, err.Error())
+				fmt.Printf("meet error when create file %s for %s\n", location, err.Error())
 			}
 			defer out.Close()
 			io.Copy(out, response.Body)
-			fmt.Printf("save file to %s", location)
+			fmt.Printf("save file to %s\n", location)
+			err = os.Chown(location, uid, gid)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 
