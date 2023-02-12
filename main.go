@@ -40,7 +40,7 @@ func main() {
 	defer reloadStorage.Close()
 	err := bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption())
 	if err != nil {
-		panic("login failed")
+		panic("login failed: " + err.Error())
 	}
 
 	// 获取登陆的用户
