@@ -13,10 +13,10 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: build image
-      run: docker build . --file Dockerfile --tag wechatBot
+      run: docker build . --file Dockerfile --tag wechat_bot
 
     - name: save image
-      run: docker save wechatBot > wechatBot.img
+      run: docker save wechat_bot > wechatBot.img
 
     - name: print
       run: echo $GITHUB_REF
