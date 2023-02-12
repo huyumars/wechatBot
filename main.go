@@ -105,7 +105,7 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			err = os.Chmod(tmpFile, 777)
+			err = os.Chmod(tmpFile, 0777)
 			if err != nil {
 				fmt.Println(err)
 			}
