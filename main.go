@@ -94,16 +94,16 @@ func main() {
 			defer out.Close()
 			io.Copy(out, response.Body)
 			fmt.Printf("save file to %s\n", tmpFile)
-			err = os.Chown(location, uid, gid)
-			if err != nil {
-				fmt.Println(err)
-			}
 			// use move let system know file changes
 			err = os.Rename(tmpFile, location)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Printf("move %s to %s, let system knows\n", tmpFile, location)
+			err = os.Chown(location, uid, gid)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 
