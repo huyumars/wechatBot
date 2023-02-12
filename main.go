@@ -84,18 +84,26 @@ func main() {
 			ct := response.Header.Get("Content-Type")
 			pathSplit := strings.Split(ct, "/")
 			ext := pathSplit[len(pathSplit)-1]
+			tmpFile := path.Join("/var/tmp", RandStringBytes(16))
 			location := path.Join(storePath, fileName(prefix)+"."+ext)
-			out, err := os.Create(location)
+			// create tmp file
+			out, err := os.Create(tmpFile)
 			if err != nil {
-				fmt.Printf("meet error when create file %s for %s\n", location, err.Error())
+				fmt.Printf("meet error when create file %s for %s\n", tmpFile, err.Error())
 			}
 			defer out.Close()
 			io.Copy(out, response.Body)
-			fmt.Printf("save file to %s\n", location)
+			fmt.Printf("save file to %s\n", tmpFile)
 			err = os.Chown(location, uid, gid)
 			if err != nil {
 				fmt.Println(err)
 			}
+			// use move let system know file changes
+			err = os.Rename(tmpFile, location)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Printf("move %s to %s, let system knows\n", tmpFile, location)
 		}
 	}
 
