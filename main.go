@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"strconv"
 	"strings"
@@ -37,6 +38,13 @@ func getIntOr(val string, defaultVal int) int {
 		return ret
 	}
 	return defaultVal
+}
+
+func move(from string, to string) (err error) {
+	var cmd *exec.Cmd
+	cmd = exec.Command("mv", from, to)
+	_, err = cmd.Output()
+	return
 }
 
 func main() {
@@ -95,7 +103,7 @@ func main() {
 			io.Copy(out, response.Body)
 			fmt.Printf("save file to %s\n", tmpFile)
 			// use move let system know file changes
-			err = os.Rename(tmpFile, location)
+			err = move(tmpFile, location)
 			if err != nil {
 				fmt.Println(err)
 			}
